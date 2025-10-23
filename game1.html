@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Juego 1 - Crea 5 frases</title>
+<style>
+body {
+    font-family: "Comic Sans MS", sans-serif;
+    background: linear-gradient(135deg,#80CBC4,#B4EBE6);
+    text-align: center;
+    padding: 25px;
+    transition: background 0.5s;
+}
+h1 { color: #213448; text-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
+
+.frases-respuestas {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+.cuadro {
+    width: 120px; height: 40px;
+    border: 2px solid #333; border-radius: 8px;
+    display: flex; justify-content: center; align-items: center;
+    font-weight: bold;
+    position: relative;
+    background: #fff; box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+.cuadro.correcto::after {
+    content: "✔"; color: green; font-size: 20px;
+    position: absolute; top: -8px; right: -8px;
+}
+.cuadro.incorrecto::after {
+    content: "✖"; color: red; font-size: 20px;
+    position: absolute; top: -8px; right: -8px;
+}
+
+.zona-construccion {
+    border: 3px dashed #94B4C1;
+    border-radius: 12px;
+    background: #fff;
+    padding: 20px;
+    min-height: 70px;
+    margin: 20px auto;
+    width: 80%;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.teclado {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.palabra {
+    background-color: #94B4C1;
+    border: none; border-radius: 10px; padding: 10px 15px;
+    font-size: 18px; cursor: pointer; transition: 0.3s;
+    color: #213448; font-weight: bold;
+}
+.palabra:hover { background-color: #547792; color: white; transform: scale(1.1); }
+
+button {
+    margin: 10px;
+    padding: 12px 25px;
+    border-radius: 12px;
+    border: none;
+    background:#FFB433;
+    color:#213448;
+    font-weight:bold;
+    font-size: 18px;
+    cursor:pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+}
+button:hover { background:#FFA500; transform: scale(1.05); }
+
+#mensaje { font-weight:bold; font-size:18px; margin-top:15px; transition: all 0.3s;}
+.final-opciones { margin-top:20px; }
+
+</style>
+</head>
+<body>
+
+<h1>Arma 5 frases con sentido</h1>
+<p>Usa las palabras para crear oraciones. Verifica cada frase.</p>
+
+<div class="frases-respuestas" id="respuestas">
+  <div class="cuadro" id="c1">1</div>
+  <div class="cuadro" id="c2">2</div>
+  <div class="cuadro" id="c3">3</div>
+  <div class="cuadro" id="c4">4</div>
+  <div class="cuadro" id="c5">5</div>
+</div>
+
+<div class="zona-construccion" id="zonaConstruccion">Haz clic en las palabras para construir tu frase...</div>
+<div class="teclado" id="teclado"></div>
+
+<button onclick="verificarFrase()">✅ Verificar frase</button>
+<button onclick="borrarFrase()">🗑 Borrar frase</button>
+
+<p id="mensaje"></p>
+<div class="final-opciones" id="opcionesFinal" style="display:none;"></div>
+
+<audio id="audioAcierto" src="audios/bien.mp3"></audio>
+<audio id="audioError" src="audios/error.mp3"></audio>
+
+<script>
+const frasesLeccion1 = [
+  "El elefante vive en África",
+  "Ángel se baña en la tina",
+  "La olla de Óscar es de barro",
+  "El sapo salta sin cansarse",
+  "Rosa baila rumba y cumbia"
+];
+
+const palabras = [...new Set(frasesLeccion1.join(" ").replace(/[.,]/g, '').split(" "))];
+
+const zona = document.getElementById("zonaConstruccion");
+const teclado = document.getElementById("teclado");
+const mensaje = document.getElementById("mensaje");
+const respuestas = document.getElementById("respuestas").children;
+const opcionesFinal = document.getElementById("opcionesFinal");
+
+const sujetos = ["El","La","Rosa","Ángel","Óscar"];
+const verbos = ["vive","baña","salta","baila","es"];
+
+let fraseActual = 0;
+let correctas = 0;
+
+// Crear teclado
+palabras.sort(()=>Math.random()-0.5).forEach(p => {
+  const btn = document.createElement("button");
+  btn.textContent = p;
+  btn.classList.add("palabra");
+  btn.onclick = () => {
+    if(zona.textContent.includes("Haz clic")) zona.textContent = "";
+    zona.textContent += (zona.textContent ? " " : "") + p;
+    zona.style.transform="scale(1.05)";
+    setTimeout(()=>zona.style.transform="scale(1)",150);
+  }
+  teclado.appendChild(btn);
+});
+
+// Borrar frase actual
+function borrarFrase(){
+  zona.textContent = "Haz clic en las palabras para construir tu frase...";
+}
+
+function verificarFrase(){
+  const frase = zona.textContent.trim();
+  if(!frase || frase.includes("Haz clic")) return;
+
+  const palabrasFrase = frase.split(" ");
+  let tieneSujeto = palabrasFrase.some(p=>sujetos.includes(p));
+  let tieneVerbo = palabrasFrase.some(p=>verbos.includes(p));
+  let valido = palabrasFrase.length >= 4 && tieneSujeto && tieneVerbo;
+
+  if(valido){
+    respuestas[fraseActual].classList.add("correcto");
+    mensaje.textContent = "✅ ¡Buena frase!";
+    document.getElementById("audioAcierto").play();
+    correctas++;
+  } else {
+    respuestas[fraseActual].classList.add("incorrecto");
+    mensaje.textContent = "❌ Frase no válida, inténtalo";
+    document.getElementById("audioError").play();
+  }
+
+  fraseActual++;
+  zona.textContent = "Haz clic en las palabras para construir tu frase...";
+
+  if(fraseActual === 5){
+    setTimeout(finalizarJuego,700);
+  }
+}
+
+function finalizarJuego(){
+  zona.style.display="none";
+  teclado.style.display="none";
+  mensaje.style.display="none";
+  opcionesFinal.style.display="block";
+
+  if(correctas >=3){
+    opcionesFinal.innerHTML = `<p>🎉 ¡Felicidades! Lograste ${correctas}/5 frases con sentido.</p>
+    <button onclick="window.location.href='index.html'">Continuar</button>
+    <button onclick="window.location.href='game1.html'">Jugar de nuevo</button>`;
+  } else {
+    opcionesFinal.innerHTML = `<p>😅 Solo lograste ${correctas}/5 frases. Debes intentarlo otra vez.</p>
+    <button onclick="window.location.href='game1.html'">Jugar de nuevo</button>`;
+  }
+}
+</script>
+
+</body>
+</html>

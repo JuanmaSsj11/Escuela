@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lección 3 - Teoría</title>
+  <link rel="stylesheet" href="estilos.css">
+  <style>
+    .contenedor {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      width: 220px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+    .card:hover {
+      transform: scale(1.05);
+      background: #f0f0f0;
+    }
+    .card img {
+      width: 150px;
+      height: 150px;
+      object-fit: contain;
+    }
+    .card p {
+      font-size: 16px;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    /* Botón continuar */
+    .btn-continuar {
+      display: block;
+      margin: 40px auto;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .btn-continuar:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <button id="btnRegresar" class="btn-regresar">⬅ Regresar</button>
+  <h1>Lección 3 - Teoría</h1>
+  <p class="autores">Autor: Mtro. Felipe Cruz Suastegi - Jefe del Sector IV Educación Primaria<br>
+  Co-autor: Juan Manuel Ontiveros Domínguez</p>
+</header>
+
+<div class="contenedor">
+  <div class="card" onclick="reproducirAudio('burro')">
+    <img src="imagenes/burro.png" alt="Burro">
+    <p>Benito busca a su burro bronco</p>
+  </div>
+  <div class="card" onclick="reproducirAudio('queso_fresco')">
+    <img src="imagenes/queso_fresco.png" alt="Queso fresco">
+    <p>Cecilia come queso fresco</p>
+  </div>
+  <div class="card" onclick="reproducirAudio('nina_sin_diente')">
+    <img src="imagenes/nina_sin_diente.png" alt="Niña sin diente">
+    <p>Se cayó el diente de Daniela</p>
+  </div>
+  <div class="card" onclick="reproducirAudio('gato')">
+    <img src="imagenes/gato.png" alt="Gato">
+    <p>El gato Goyo maúlla en el tejado</p>
+  </div>
+  <div class="card" onclick="reproducirAudio('hormiga')">
+    <img src="imagenes/hormiga.png" alt="Hormiga">
+    <p>La hormiga lleva comida a su hogar</p>
+  </div>
+</div>
+
+<!-- Botón Continuar -->
+<button class="btn-continuar" onclick="window.location.href='juego1L3.html'">Continuar</button>
+
+<script>
+function reproducirAudio(nombre){
+  let audio = new Audio("audios/" + nombre + ".mp3");
+  audio.play();
+}
+
+// Botón regresar
+document.getElementById("btnRegresar").addEventListener("click", () => {
+  window.location.href = "index.html";
+});
+</script>
+
+</body>
+</html>
+

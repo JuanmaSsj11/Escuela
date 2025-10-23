@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relaciona Imágenes y Frases - Lección 3</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leader-line/1.0.7/leader-line.min.js"></script>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #fffdf5;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s ease;
+  }
+
+  header {
+    text-align: center;
+    background: linear-gradient(135deg, #1565c0, #1e88e5);
+    padding: 20px;
+    color: white;
+    border-radius: 0 0 25px 25px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    position: relative;
+  }
+
+  header h1 { margin: 0; font-size: 2em; }
+  header .autores { margin-top: 8px; font-size: 0.9em; font-style: italic; color: #bbdefb; }
+
+  .btn-regresar {
+    position: absolute; left: 20px; top: 20px;
+    background-color: #f44336; border: none; color: white;
+    font-size: 16px; padding: 8px 12px; border-radius: 8px; cursor: pointer;
+  }
+  .btn-regresar:hover { background-color: #d32f2f; }
+
+  #juego {
+    display: flex; flex-direction: column; gap: 40px;
+    padding: 40px 20px; min-height: 70vh; align-items: center;
+  }
+
+  .fila {
+    display: flex; justify-content: space-between; align-items: center;
+    width: 90%; max-width: 1200px;
+  }
+
+  .imagen, .frase {
+    background-color: white; padding: 15px; border: 2px solid #333;
+    border-radius: 12px; text-align: center; box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    cursor: pointer; flex-shrink: 0; width: 300px; transition: all 0.3s ease;
+  }
+
+  .imagen img { max-width: 100%; max-height: 120px; border-radius: 10px; }
+  .imagen:hover, .frase:hover { transform: translateY(-4px); border-color: #007bff; }
+  .frase { font-size: 16px; font-weight: bold; background-color: #f9f9f9; }
+
+  /* Parpadeo */
+  .parpadeo-correcto { animation: flashGreen 0.5s; }
+  .parpadeo-error { animation: flashRed 0.5s; }
+  @keyframes flashGreen { 0%,100% {background-color: rgba(0,255,0,0.2);} 50% {background-color: rgba(0,255,0,0);} }
+  @keyframes flashRed { 0%,100% {background-color: rgba(255,0,0,0.2);} 50% {background-color: rgba(255,0,0,0);} }
+
+  /* Responsive */
+  @media (max-width: 1024px) { .fila { gap: 60px; } }
+  @media (max-width: 768px) {
+    .fila { flex-direction: column; align-items: center; gap: 30px; }
+    .imagen, .frase { width: 90%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <button id="btnRegresar" class="btn-regresar">⬅ Regresar</button>
+  <h1>Visualiza, Lee y Relaciona - Lección 3</h1>
+  <p class="autores">Autor: Mtro. Felipe Cruz Suastegi - Jefe del Sector IV Educación Primaria<br>
+    Co-autor: Juan Manuel Ontiveros Domínguez</p>
+</header>
+
+<!-- Audios -->
+<audio id="audio-error" src="audios/error.mp3"></audio>
+<audio id="audio-correcto" src="audios/correcto.mp3"></audio>
+<audio id="audio-yeh" src="audios/yeh.mp3"></audio>
+
+<div id="juego"></div>
+
+<script>
+const datos = [
+  {img: "burro.png", frase: "Benito busca a su burro bronco", audio: "burro.mp3"},
+  {img: "queso_fresco.png", frase: "Cecilia come queso fresco", audio: "queso_fresco.mp3"},
+  {img: "nina_sin_diente.png", frase: "Se cayó el diente de Daniela", audio: "nina_sin_diente.mp3"},
+  {img: "gato.png", frase: "El gato Goyo maúlla en el tejado", audio: "gato.mp3"},
+  {img: "hormiga.png", frase: "La hormiga lleva comida a su hogar", audio: "hormiga.mp3"}
+];
+
+let seleccionFrase = null;
+let lineas = [];
+let correctas = 0;
+
+const audioError = document.getElementById("audio-error");
+const audioCorrecto = document.getElementById("audio-correcto");
+const audioYeh = document.getElementById("audio-yeh");
+
+function reproducirAudio(nombre) {
+  const audio = new Audio(`audios/${nombre}`);
+  audio.play();
+}
+
+function mezclar(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function iniciarJuego() {
+  const juego = document.getElementById("juego");
+  juego.innerHTML = "";
+  lineas.forEach(l => l.remove());
+  lineas = [];
+  correctas = 0;
+
+  const frasesRandom = mezclar([...datos]);
+  const imagenesRandom = mezclar([...datos]);
+
+  for (let i = 0; i < datos.length; i++) {
+    let fila = document.createElement("div");
+    fila.className = "fila";
+
+    let divFrase = document.createElement("div");
+    divFrase.className = "frase";
+    divFrase.dataset.index = datos.findIndex(d => d.frase === frasesRandom[i].frase);
+    divFrase.textContent = frasesRandom[i].frase;
+
+    divFrase.addEventListener("click", () => {
+      document.querySelectorAll(".frase").forEach(f => f.style.borderColor = "#333");
+      seleccionFrase = divFrase;
+      divFrase.style.borderColor = "blue";
+      reproducirAudio(datos[divFrase.dataset.index].audio);
+    });
+
+    let divImagen = document.createElement("div");
+    divImagen.className = "imagen";
+    divImagen.dataset.index = datos.findIndex(d => d.frase === imagenesRandom[i].frase);
+    divImagen.innerHTML = `<img src="imagenes/${imagenesRandom[i].img}" alt="">`;
+
+    divImagen.addEventListener("click", () => {
+      if (!seleccionFrase) return;
+
+      const fraseIndex = seleccionFrase.dataset.index;
+      const imgIndex = divImagen.dataset.index;
+      const esCorrecta = fraseIndex == imgIndex;
+      const colorLinea = esCorrecta ? "green" : "red";
+
+      let linea = new LeaderLine(seleccionFrase, divImagen, { color: colorLinea, size: 4, startPlug: 'disc', endPlug: 'arrow' });
+      lineas.push(linea);
+
+      if (esCorrecta) {
+        divImagen.classList.add("parpadeo-correcto");
+        audioCorrecto.currentTime = 0; audioCorrecto.play();
+        correctas++;
+        setTimeout(() => divImagen.classList.remove("parpadeo-correcto"), 500);
+
+        if (correctas === datos.length) {
+          // Cuando completas el juego → Final con parámetro
+          setTimeout(() => { window.location.href = "final.html?origen=juego1L3"; }, 1200);
+        }
+      } else {
+        divImagen.classList.add("parpadeo-error");
+        audioError.currentTime = 0; audioError.play();
+        setTimeout(() => { divImagen.classList.remove("parpadeo-error"); linea.remove(); }, 700);
+      }
+
+      seleccionFrase.style.borderColor = "#333";
+      seleccionFrase = null;
+    });
+
+    fila.appendChild(divFrase);
+    fila.appendChild(divImagen);
+    juego.appendChild(fila);
+  }
+}
+
+document.getElementById("btnRegresar").addEventListener("click", () => { window.location.href = "teoria3.html"; });
+
+iniciarJuego();
+</script>
+
+</body>
+</html>

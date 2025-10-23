@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menú Principal</title>
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #a8edea, #fed6e3);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 30px 0;
+}
+
+.contenedor {
+    text-align: center;
+    width: 100%;
+    max-width: 1000px;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 2em;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+}
+
+h2 {
+    margin-top: 40px;
+    color: #444;
+    text-decoration: underline;
+}
+
+.grid-linea {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 10px 0;
+}
+
+.card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    padding: 20px 15px;
+    cursor: pointer;
+    width: 160px;
+    min-width: 160px;
+    transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.card h3 {
+    margin: 10px 0;
+    font-size: 1.2em;
+    color: #444;
+}
+
+.icono {
+    font-size: 2.5em;
+    margin-bottom: 8px;
+}
+</style>
+</head>
+<body>
+
+<div class="contenedor">
+    <h1>📚 Menú Principal de Actividades</h1>
+
+    <!-- 🔹 Primera hilera: Lecciones -->
+    <h2>Lecciones</h2>
+    <div class="grid-linea">
+        <div class="card" onclick="irALeccion(1)">
+            <div class="icono">🐘</div>
+            <h3>Lección 1</h3>
+        </div>
+        <div class="card" onclick="irALeccion(2)">
+            <div class="icono">🎨</div>
+            <h3>Lección 2</h3>
+        </div>
+        <div class="card" onclick="irALeccion(3)">
+            <div class="icono">📖</div>
+            <h3>Lección 3</h3>
+        </div>
+        <div class="card" onclick="irALeccion(4)">
+            <div class="icono">🌎</div>
+            <h3>Lección 4</h3>
+        </div>
+        <div class="card" onclick="irALeccion(5)">
+            <div class="icono">⭐</div>
+            <h3>Lección 5</h3>
+        </div>
+    </div>
+
+    <!-- 🔹 Segunda hilera: Formar Palabras -->
+    <h2>Formar Palabras</h2>
+    <div class="grid-linea">
+        <div class="card" onclick="irAJuego(1)"><div class="icono">🔤</div><h3>Juego 1</h3></div>
+        <div class="card" onclick="irAJuego(2)"><div class="icono">🔤</div><h3>Juego 2</h3></div>
+        <div class="card" onclick="irAJuego(3)"><div class="icono">🔤</div><h3>Juego 3</h3></div>
+        <div class="card" onclick="irAJuego(4)"><div class="icono">🔤</div><h3>Juego 4</h3></div>
+        <div class="card" onclick="irAJuego(5)"><div class="icono">🔤</div><h3>Juego 5</h3></div>
+    </div>
+
+    <!-- 🔹 Tercera hilera: Silabear -->
+    <h2>Silabear</h2>
+    <div class="grid-linea">
+        <div class="card" onclick="irASilabear(1)"><div class="icono">🗣️</div><h3>Silaba 1</h3></div>
+        <div class="card" onclick="irASilabear(2)"><div class="icono">🗣️</div><h3>Silaba 2</h3></div>
+        <div class="card" onclick="irASilabear(3)"><div class="icono">🗣️</div><h3>Silaba 3</h3></div>
+        <div class="card" onclick="irASilabear(4)"><div class="icono">🗣️</div><h3>Silaba 4</h3></div>
+        <div class="card" onclick="irASilabear(5)"><div class="icono">🗣️</div><h3>Silaba 5</h3></div>
+    </div>
+
+    <!-- 🔹 Cuarta hilera: Lectura -->
+    <h2>Lectura</h2>
+    <div class="grid-linea">
+        <div class="card" onclick="irALectura(1)"><div class="icono">📚</div><h3>Lectura 1</h3></div>
+        <div class="card" onclick="irALectura(2)"><div class="icono">📚</div><h3>Lectura 2</h3></div>
+        <div class="card" onclick="irALectura(3)"><div class="icono">📚</div><h3>Lectura 3</h3></div>
+        <div class="card" onclick="irALectura(4)"><div class="icono">📚</div><h3>Lectura 4</h3></div>
+        <div class="card" onclick="irALectura(5)"><div class="icono">📚</div><h3>Lectura 5</h3></div>
+    </div>
+</div>
+
+<script>
+function irALeccion(num) {
+    switch(num){
+        case 1: window.location.href = "teoria.html"; break;
+        case 2: window.location.href = "teoria2.html"; break;
+        case 3: window.location.href = "teoria3.html"; break;
+        case 4: window.location.href = "teoria4.html"; break;
+        case 5: window.location.href = "teoria5.html"; break;
+    }
+}
+
+function irAJuego(num) {
+    switch(num){
+        case 1: window.location.href = "game1.html"; break;
+        case 2: window.location.href = "game2.html"; break;
+        case 3: window.location.href = "game3.html"; break;
+        case 4: window.location.href = "game4.html"; break;
+        case 5: window.location.href = "game5.html"; break;
+    }
+}
+
+function irASilabear(num) {
+    switch(num){
+        case 1: window.location.href = "silabear1.html"; break;
+        case 2: window.location.href = "silabear2.html"; break;
+        case 3: window.location.href = "silabear3.html"; break;
+        case 4: window.location.href = "silabear4.html"; break;
+        case 5: window.location.href = "silabear5.html"; break;
+    }
+}
+
+function irALectura(num) {
+    switch(num){
+        case 1: window.location.href = "lectura1.html"; break;
+        case 2: window.location.href = "lectura2.html"; break;
+        case 3: window.location.href = "lectura3.html"; break;
+        case 4: window.location.href = "lectura4.html"; break;
+        case 5: window.location.href = "lectura5.html"; break;
+    }
+}
+</script>
+
+</body>
+</html>
