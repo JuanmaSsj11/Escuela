@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo 4 - Ordena las frases</title>
+<style>
+body.parpadeo-correcto { animation: flash-verde 0.5s; }
+body.parpadeo-error { animation: flash-rojo 0.5s; }
+
+@keyframes flash-verde { 0% {background-color: rgba(0,255,0,0.2);} 100% {background-color: transparent;} }
+@keyframes flash-rojo { 0% {background-color: rgba(255,0,0,0.2);} 100% {background-color: transparent;} }
+
+header { text-align: center; background: linear-gradient(135deg,#1565c0,#1e88e5); color:white; padding:20px; border-radius:0 0 25px 25px; position: relative; box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+header h1 { margin:0; }
+.btn-regresar { position:absolute; left:20px; top:20px; background-color:#f44336; border:none; color:white; font-size:16px; padding:8px 12px; border-radius:8px; cursor:pointer;}
+.btn-regresar:hover { background-color:#d32f2f; }
+
+.juego4 { display:flex; flex-direction: column; align-items:center; gap:20px; margin-top:40px; }
+#imagenFrase { cursor:pointer; }
+.imagenFrase { width:200px; border-radius:12px; box-shadow:0 3px 8px rgba(0,0,0,0.3); }
+#palabras { display:flex; flex-wrap: wrap; justify-content:center; gap:10px; max-width:600px; }
+.palabra { background:#f0f0f0; border:2px solid #333; border-radius:8px; padding:8px 12px; font-size:18px; cursor:pointer; transition:0.2s; }
+.palabra:hover { background:#e3f2fd; }
+.palabra.seleccionada { background:#90caf9; border-color:#1565c0; }
+#fraseSeleccionada { font-weight:bold; margin:10px 0; min-height:24px; }
+#verificar { background:#1e88e5; color:white; font-size:18px; padding:10px 18px; border:none; border-radius:10px; cursor:pointer; }
+#verificar:hover { background:#1565c0; }
+#mensaje { font-weight:bold; color:white; padding:10px 20px; border-radius:10px; display:none; }
+#mensaje.visible { display:inline-block; }
+.instruccion-audio { font-size:18px; color:#1565c0; font-weight:bold; text-align:center; line-height:1.4; }
+</style>
+</head>
+<body>
+
+<header>
+  <button id="btnRegresar" class="btn-regresar">⬅ Regresar</button>
+  <h1>Demo 4 - Construye la frase correcta</h1>
+  <p class="autores">Autor: Mtro. Felipe Cruz Suastegi - Co-autor: Juan Manuel Ontiveros Domínguez</p>
+</header>
+
+<!-- Audios -->
+<audio id="audio-error" src="audios/error.mp3"></audio>
+<audio id="audio-correcto" src="audios/correcto.mp3"></audio>
+<audio id="audio-yeh" src="audios/yeh.mp3"></audio>
+<audio id="ele_tina" src="audios/ele_tina.mp3"></audio>
+<audio id="angel_afri" src="audios/angel_afri.mp3"></audio>
+
+<div class="juego4">
+  <!-- Instrucciones claras y enfatizadas -->
+  <p class="instruccion-audio">
+    🔊 Da clic en la imagen para escuchar el audio de la frase.<br>
+    Luego, crea la frase correcta usando las palabras que aparecen abajo.<br>
+    Escucha el audio tantas veces como necesites antes de armar la frase.
+  </p>
+
+  <div id="imagenFrase"></div>
+  <div id="fraseSeleccionada"></div>
+  <div id="palabras"></div>
+  <button id="verificar">Verificar</button>
+</div>
+
+<div id="mensaje"></div>
+
+<script>
+const datos = [
+  { img:"ele_tina.png", frase:"El elefante se baña en la tina", audio:"ele_tina" },
+  { img:"angel_afri.png", frase:"Ángel vive en África", audio:"angel_afri" }
+];
+
+// Todas las palabras de ambas frases mezcladas
+const todasPalabras = ["El","elefante","vive","en","África","Ángel","se","baña","la","tina"];
+
+let fraseActualIndex = 0;
+let seleccionadas = [];
+
+const audioError = document.getElementById("audio-error");
+const audioCorrecto = document.getElementById("audio-correcto");
+const audioYeh = document.getElementById("audio-yeh");
+
+function reproducirAudioActual(){
+  const actual = datos[fraseActualIndex];
+  const audio = document.getElementById(actual.audio);
+  audio.currentTime = 0;
+  audio.play();
+}
+
+function iniciarJuego(){
+  seleccionadas = [];
+  document.getElementById("palabras").innerHTML = "";
+  document.getElementById("fraseSeleccionada").textContent = "";
+
+  const actual = datos[fraseActualIndex];
+  const imgDiv = document.getElementById("imagenFrase");
+  imgDiv.innerHTML = `<img src="imagenes/${actual.img}" class="imagenFrase">`;
+  imgDiv.onclick = reproducirAudioActual;
+
+  document.getElementById("fraseSeleccionada").textContent = "Haz click en las palabras para construir la frase:";
+
+  // Mezclar todas las palabras
+  const desordenadas = [...todasPalabras].sort(() => Math.random() - 0.5);
+  desordenadas.forEach(palabra => {
+    const btn = document.createElement("button");
+    btn.className = "palabra";
+    btn.textContent = palabra;
+    btn.addEventListener("click", () => {
+      if(btn.classList.contains("seleccionada")){
+        btn.classList.remove("seleccionada");
+        seleccionadas = seleccionadas.filter(p => p !== palabra);
+      } else {
+        btn.classList.add("seleccionada");
+        seleccionadas.push(palabra);
+      }
+      document.getElementById("fraseSeleccionada").textContent = seleccionadas.join(" ");
+    });
+    document.getElementById("palabras").appendChild(btn);
+  });
+}
+
+document.getElementById("verificar").addEventListener("click", ()=>{
+  const actual = datos[fraseActualIndex];
+  const seleccion = seleccionadas.join(" ");
+  const esCorrecto = seleccion === actual.frase;
+
+  const mensaje = document.getElementById("mensaje");
+  mensaje.textContent = esCorrecto ? "¡Correcto!" : "¡Intenta de nuevo!";
+  mensaje.style.background = esCorrecto ? "#4caf50" : "#e53935";
+  mensaje.classList.add("visible");
+
+  if(esCorrecto){
+    audioCorrecto.currentTime = 0;
+    audioCorrecto.play();
+    document.body.classList.add("parpadeo-correcto");
+    setTimeout(()=>document.body.classList.remove("parpadeo-correcto"),500);
+
+    fraseActualIndex++;
+    if(fraseActualIndex < datos.length){
+      setTimeout(iniciarJuego,900);
+    } else {
+      // Mostrar mensaje final y botón de continuar
+      audioYeh.currentTime = 0;
+      audioYeh.play();
+      document.body.innerHTML = `
+        <div style="display:flex; justify-content:center; align-items:center; height:80vh; flex-direction:column; text-align:center;">
+          <h2>¡Has terminado!</h2>
+          <p>Cuando estés listo, presiona "Continuar" para ir al siguiente demo.</p>
+          <button style="padding:15px 30px; font-size:18px; border:none; border-radius:10px; background:#1e88e5; color:white; cursor:pointer;"
+            onclick="window.location.href='demo5.html'">Continuar</button>
+        </div>
+      `;
+    }
+  } else {
+    audioError.currentTime = 0;
+    audioError.play();
+    document.body.classList.add("parpadeo-error");
+    setTimeout(()=>document.body.classList.remove("parpadeo-error"),500);
+    setTimeout(iniciarJuego,900);
+  }
+
+  setTimeout(()=>mensaje.classList.remove("visible"),1000);
+});
+
+document.getElementById("btnRegresar").addEventListener("click", ()=>{
+  window.location.href = "demo3.html";
+});
+
+iniciarJuego();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lectura divertida</title>
+<style>
+body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background: linear-gradient(to bottom, #fff8dc, #ffefba);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+    color: #333;
+}
+
+h1 {
+    color: #ff6f61;
+    text-shadow: 2px 2px #ffd700;
+    margin-bottom: 30px;
+}
+
+p {
+    font-size: 20px;
+    line-height: 1.6;
+    margin: 12px 0;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 10px 15px;
+    border-radius: 12px;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+}
+
+button {
+    margin-top: 20px;
+    padding: 14px 24px;
+    font-size: 18px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+}
+
+#playAudio {
+    background-color: #4caf50;
+    color: white;
+}
+#playAudio:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+#siguiente {
+    background-color: #1e88e5;
+    color: white;
+    margin-top: 15px;
+}
+#siguiente:hover {
+    background-color: #1565c0;
+    transform: scale(1.05);
+}
+</style>
+</head>
+<body>
+
+<h1>Una historia divertida</h1>
+
+<p>En la selva, Ángel decidió darse un baño en su tina gigante. </p>
+<p>Mientras tanto, el elefante caminaba tranquilamente, observando todo con curiosidad. </p>
+<p>De repente, Ángel y el elefante se encontraron y comenzaron a jugar juntos entre risas y chapoteos. </p>
+<p>Fue un día lleno de aventuras y alegría para ambos amigos. </p>
+
+<button id="playAudio">▶ Escuchar la historia</button>
+<button id="siguiente">Siguiente</button>
+
+<audio id="audioText" src="audios/text.mp3"></audio>
+
+<script>
+const audio = document.getElementById("audioText");
+
+document.getElementById("playAudio").addEventListener("click", () => {
+    audio.currentTime = 0;
+    audio.play();
+});
+
+document.getElementById("siguiente").addEventListener("click", () => {
+    window.location.href = "index.html";
+});
+</script>
+
+</body>
+</html>
