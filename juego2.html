@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ordena las palabras</title>
+<link rel="stylesheet" href="estilos.css">
+<style>
+body.parpadeo-correcto {
+  animation: flash-verde 0.5s;
+}
+body.parpadeo-error {
+  animation: flash-rojo 0.5s;
+}
+@keyframes flash-verde {
+  0% { background-color: rgba(0, 255, 0, 0.2); }
+  100% { background-color: transparent; }
+}
+@keyframes flash-rojo {
+  0% { background-color: rgba(255, 0, 0, 0.2); }
+  100% { background-color: transparent; }
+}
+
+header {
+  text-align: center;
+  background: linear-gradient(135deg, #1565c0, #1e88e5);
+  padding: 20px;
+  color: white;
+  border-radius: 0 0 25px 25px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  position: relative;
+}
+header h1 { margin: 0; font-size: 2em; }
+header .autores { margin-top: 8px; font-size: 0.9em; font-style: italic; color: #bbdefb; }
+
+.btn-regresar {
+  position: absolute; left: 20px; top: 20px;
+  background-color: #f44336; border: none; color: white;
+  font-size: 16px; padding: 8px 12px; border-radius: 8px; cursor: pointer;
+}
+.btn-regresar:hover { background-color: #d32f2f; }
+
+.juego2 {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 25px; padding: 40px 20px;
+}
+.imagenFrase { width: 180px; border-radius: 15px; box-shadow: 0 3px 6px rgba(0,0,0,0.2); }
+
+#palabras {
+  display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+}
+.palabra {
+  background-color: #f0f8ff;
+  border: 2px solid #1565c0;
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 18px;
+  font-weight: bold;
+  color: #1565c0;
+}
+.palabra:hover { background-color: #bbdefb; }
+.palabra.seleccionada {
+  background-color: #1565c0;
+  color: white;
+}
+
+#verificar {
+  margin-top: 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#verificar:hover { background-color: #388e3c; }
+
+#mensaje {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 22px;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 10px;
+  display: none;
+}
+#mensaje.visible { display: inline-block; }
+
+#final {
+  text-align: center;
+  padding: 50px 20px;
+}
+#continuar {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#continuar:hover { background-color: #43a047; }
+</style>
+</head>
+<body>
+
+<header>
+  <button id="btnRegresar" class="btn-regresar">⬅ Regresar</button>
+  <h1>Visualiza, Lee y Ordena</h1>
+  <p class="autores">
+    Autor: Mtro. Felipe Cruz Suastegi - Jefe del Sector IV Educación Primaria<br>
+    Co-autor: Juan Manuel Ontiveros Domínguez
+  </p>
+</header>
+
+<audio id="audio-error" src="audios/error.mp3"></audio>
+<audio id="audio-correcto" src="audios/correcto.mp3"></audio>
+<audio id="audio-yeh" src="audios/yeh.mp3"></audio>
+
+<div class="juego2" id="juego2">
+  <div id="imagenFrase"></div>
+  <div id="fraseSeleccionada"></div>
+  <div id="palabras"></div>
+  <button id="verificar">Verificar</button>
+</div>
+
+<div id="mensaje"></div>
+
+<script>
+const datos = [
+  {img:"elefante.png",  frase: ["El elefante vive en África"]},
+  {img:"nino_tina.png", frase: ["Ángel se baña en la tina"]},
+  {img:"olla.png",      frase: ["La olla de Óscar es de barro"]},
+  {img:"sapo.png",      frase: ["El sapo salta sin cansarse"]},
+  {img:"bailarina.png", frase: ["Rosa baila rumba y cumbia","Rosa baila cumbia y rumba"]}
+];
+
+let fraseActualIndex = 0;
+let seleccionadas = [];
+
+const audioError = document.getElementById("audio-error");
+const audioCorrecto = document.getElementById("audio-correcto");
+const audioYeh = document.getElementById("audio-yeh");
+
+function iniciarJuego() {
+  seleccionadas = [];
+  document.getElementById("palabras").innerHTML = "";
+  document.getElementById("fraseSeleccionada").textContent = "";
+
+  let datosActuales = datos[fraseActualIndex];
+  let imagenDiv = document.getElementById("imagenFrase");
+  imagenDiv.innerHTML = `<img src="imagenes/${datosActuales.img}" alt="Imagen frase" class="imagenFrase">`;
+
+  document.getElementById("fraseSeleccionada").textContent = "Selecciona las palabras en orden:";
+
+  let palabras = datosActuales.frase[0].split(" ");
+  let palabrasDesordenadas = [...palabras].sort(()=>Math.random()-0.5);
+
+  palabrasDesordenadas.forEach(palabra=>{
+    let btn = document.createElement("button");
+    btn.className = "palabra";
+    btn.textContent = palabra;
+    btn.dataset.seleccionada = "false";
+
+    btn.addEventListener("click", () => {
+      if(btn.classList.contains("seleccionada")){
+        btn.classList.remove("seleccionada");
+        seleccionadas = seleccionadas.filter(p => p !== palabra);
+      } else {
+        btn.classList.add("seleccionada");
+        seleccionadas.push(palabra);
+      }
+      actualizarFraseSeleccionada();
+    });
+
+    document.getElementById("palabras").appendChild(btn);
+  });
+}
+
+function actualizarFraseSeleccionada(){
+  document.getElementById("fraseSeleccionada").textContent = seleccionadas.join(" ");
+}
+
+document.getElementById("verificar").addEventListener("click", ()=>{
+  let posiblesFrases = datos[fraseActualIndex].frase;
+  let textoSeleccion = seleccionadas.join(" ");
+  if(textoSeleccion.trim()==="") return; // No hace nada si está vacío
+
+  let correcto = posiblesFrases.includes(textoSeleccion);
+  mostrarMensaje(correcto);
+
+  if(correcto){
+    fraseActualIndex++;
+    if(fraseActualIndex < datos.length){
+      setTimeout(iniciarJuego, 900);
+    } else {
+      audioYeh.currentTime = 0;
+      audioYeh.play();
+      mostrarPantallaFinal();
+    }
+  } else {
+    setTimeout(iniciarJuego, 900);
+  }
+});
+
+function mostrarPantallaFinal(){
+  const juego = document.getElementById("juego2");
+  juego.innerHTML = `
+    <div id="final">
+      <h2 style="color:#4caf50; font-size:2em;">¡Felicidades! 🎉</h2>
+      <p style="font-size:1.2em; color:#333;">Has completado este juego correctamente.</p>
+      <button id="continuar">Continuar</button>
+    </div>
+  `;
+  document.getElementById("continuar").addEventListener("click", () => {
+    window.location.href = "game1.html";
+  });
+}
+
+document.getElementById("btnRegresar").addEventListener("click", () => {
+  window.location.href = "juego.html";
+});
+
+function mostrarMensaje(correcto){
+  let mensajeDiv = document.getElementById("mensaje");
+  mensajeDiv.textContent = correcto ? "¡Correcto!" : "¡Intenta de nuevo!";
+  mensajeDiv.style.background = correcto ? "#4caf50" : "#e53935";
+  mensajeDiv.classList.add("visible");
+
+  if(correcto){
+    audioCorrecto.currentTime = 0;
+    audioCorrecto.play();
+    document.body.classList.add("parpadeo-correcto");
+    setTimeout(()=>document.body.classList.remove("parpadeo-correcto"), 500);
+  } else {
+    audioError.currentTime = 0;
+    audioError.play();
+    document.body.classList.add("parpadeo-error");
+    setTimeout(()=>document.body.classList.remove("parpadeo-error"), 500);
+  }
+
+  setTimeout(()=>mensajeDiv.classList.remove("visible"), 1000);
+}
+
+iniciarJuego();
+</script>
+</body>
+</html>

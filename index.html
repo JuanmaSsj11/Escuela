@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menú Principal</title>
+<style>
+body {
+    margin: 0;
+    font-family: 'Comic Sans MS', sans-serif;
+    background: linear-gradient(135deg, #a8edea, #fed6e3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+}
+
+.contenedor {
+    width: 100%;
+    max-width: 800px;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 2.2em;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+.grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    padding: 25px;
+    cursor: pointer;
+    width: 180px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.card h3 {
+    color: #444;
+    font-size: 1.3em;
+    margin-top: 10px;
+}
+
+.icono {
+    font-size: 3em;
+    margin-bottom: 5px;
+}
+</style>
+</head>
+<body>
+
+<div class="contenedor">
+    <h1>📘 Módulos de Aprendizaje Lectura</h1>
+    <div class="grid">
+        <div class="card" onclick="irAModulo(1)">
+            <div class="icono">🦋</div>
+            <h3>Módulo 1</h3>
+        </div>
+        <div class="card" onclick="irAModulo(2)">
+            <div class="icono">🌈</div>
+            <h3>Módulo 2</h3>
+        </div>
+        <div class="card" onclick="irAModulo(3)">
+            <div class="icono">🐢</div>
+            <h3>Módulo 3</h3>
+        </div>
+        <div class="card" onclick="irAModulo(4)">
+            <div class="icono">🌻</div>
+            <h3>Módulo 4</h3>
+        </div>
+        <div class="card" onclick="irAModulo(5)">
+            <div class="icono">⭐</div>
+            <h3>Módulo 5</h3>
+        </div>
+    </div>
+</div>
+
+<script>
+function irAModulo(num) {
+    switch(num){
+        case 1: window.location.href = "teoria.html"; break;
+        case 2: window.location.href = "teoria2.html"; break;
+        case 3: window.location.href = "teoria3.html"; break;
+        case 4: window.location.href = "teoria4.html"; break;
+        case 5: window.location.href = "teoria5.html"; break;
+    }
+}
+</script>
+
+</body>
+</html>

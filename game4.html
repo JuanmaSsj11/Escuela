@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Escucha y arma la frase - Lección 4</title>
+<link rel="stylesheet" href="estilos.css">
+<style>
+  :root{
+    --bg1:#fffdf5;
+    --accent:#1565c0;
+    --good:#4caf50;
+    --bad:#e53935;
+    --card:#ffffff;
+  }
+  body{
+    margin:0;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background: linear-gradient(135deg,#f6fbff,#fffdf5);
+    color:#213448;
+  }
+
+  header{
+    text-align:center;
+    padding:18px 12px;
+    background:linear-gradient(135deg,var(--accent),#1e88e5);
+    color:white;
+    box-shadow:0 3px 8px rgba(0,0,0,0.12);
+  }
+  header h1{ margin:0; font-size:1.6rem; }
+  header p.rules{ margin:8px 0 0; font-size:0.95rem; opacity:0.95; }
+
+  main{ padding:20px; max-width:1100px; margin:18px auto; }
+
+  .instrucciones{
+    background:var(--card);
+    padding:12px 14px;
+    border-radius:12px;
+    box-shadow:0 6px 14px rgba(0,0,0,0.06);
+    margin-bottom:16px;
+    font-size:0.98rem;
+  }
+
+  .juego{
+    display:flex;
+    gap:18px;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+
+  .panel-imagen{
+    width:320px;
+    min-width:240px;
+    background:var(--card);
+    border-radius:14px;
+    padding:14px;
+    text-align:center;
+    box-shadow:0 6px 16px rgba(0,0,0,0.06);
+  }
+  .panel-imagen img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+    border-radius:10px;
+    cursor:pointer;
+    border:3px solid transparent;
+    transition:transform .18s, border-color .18s;
+  }
+  .panel-imagen img:active{ transform:scale(.995); }
+  .hint { margin-top:10px; font-weight:600; color:#333; }
+
+  .panel-palabras{
+    flex:1;
+    min-width:320px;
+    background:var(--card);
+    border-radius:14px;
+    padding:14px;
+    box-shadow:0 6px 16px rgba(0,0,0,0.06);
+  }
+
+  #fraseSeleccionada{
+    min-height:56px;
+    border-radius:10px;
+    border:3px dashed #94B4C1;
+    display:flex;
+    align-items:center;
+    padding:12px;
+    font-size:18px;
+    background:#fff;
+    margin-bottom:12px;
+  }
+
+  #palabras{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+
+  .btnPalabra{
+    background:#f0f8ff;
+    border:2px solid var(--accent);
+    color:var(--accent);
+    padding:8px 12px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:700;
+    transition:all .15s;
+    user-select:none;
+  }
+  .btnPalabra:hover{ transform:translateY(-3px); }
+  .btnPalabra.selected{
+    background:var(--accent);
+    color:white;
+    border-color:var(--accent);
+  }
+
+  .controles{
+    margin-top:14px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .btn{
+    padding:10px 16px;
+    border-radius:10px;
+    border:none;
+    font-weight:700;
+    cursor:pointer;
+    font-size:16px;
+  }
+  .btn-verificar{ background:var(--good); color:white; }
+  .btn-borrar{ background:#ffd54f; color:#213448; }
+  .btn-escuchar{ background:#90caf9; color:#043b6b; }
+
+  #mensaje{
+    margin-top:12px;
+    padding:8px 12px;
+    border-radius:10px;
+    display:inline-block;
+    font-weight:700;
+    color:white;
+    visibility:hidden;
+    opacity:0;
+    transition:all .25s;
+  }
+
+  #pantallaFinal{
+    text-align:center;
+    padding:30px 18px;
+  }
+  #continuar{
+    background:var(--accent); color:white;
+    border:none; padding:12px 20px; border-radius:10px; cursor:pointer; font-weight:700;
+  }
+
+  body.flash-good{ animation: flashGood .45s; }
+  body.flash-bad{  animation: flashBad .45s; }
+  @keyframes flashGood{ 0%{background:#fff} 50%{background:rgba(76,175,80,0.12)} 100%{background:transparent} }
+  @keyframes flashBad{ 0%{background:#fff} 50%{background:rgba(229,57,53,0.12)} 100%{background:transparent} }
+
+  @media (max-width:800px){
+    .juego{ flex-direction:column; align-items:center; }
+    .panel-imagen{ width:100%; max-width:420px; }
+    .panel-palabras{ width:100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔊 Escucha y arma la frase</h1>
+  <p class="rules">Haz clic en la imagen para escuchar el audio, luego forma la frase con las palabras correctas.</p>
+</header>
+
+<main>
+  <div class="instrucciones">
+    Escucha con atención y arma la oración exacta. Si no escribes nada, el botón "Verificar" no hará nada.
+  </div>
+
+  <div class="juego">
+    <div class="panel-imagen">
+      <img id="imagenFrase" src="imagenes/benito_queso.png" alt="Imagen - clic para reproducir">
+      <div class="hint">Haz clic en la imagen para reproducir el audio.</div>
+    </div>
+
+    <div class="panel-palabras">
+      <div id="fraseSeleccionada">Selecciona las palabras abajo...</div>
+
+      <div id="palabras" aria-live="polite"></div>
+
+      <div class="controles">
+        <button class="btn btn-escuchar" id="btnReproducir">🔁 Escuchar otra vez</button>
+        <button class="btn btn-borrar" id="btnBorrar">🗑 Borrar</button>
+        <button class="btn btn-verificar" id="btnVerificar">✅ Verificar</button>
+        <div id="mensaje"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<audio id="audioError" src="audios/error.mp3"></audio>
+<audio id="audioCorrecto" src="audios/correcto.mp3"></audio>
+
+<script>
+const datos = [
+  { img: "isa_iguana.png",  frase: "Isabel mira la luna con su iguana.",   audio: "isa_iguana.mp3" },
+  { img: "igu.png", frase: "La iguana sube al árbol bajo la luna.", audio: "igu.mp3" },
+  { img: "memo_agua.png",  frase: "Memo bebe agua de jamaica.",   audio: "memo_agua.mp3" },
+  { img: "kilo_memo.png",  frase: "El kilo de manzanas es de Memo.",  audio: "kilo_memo.mp3" },
+  { img: "lola_kiwi.png", frase: "Lola come kiwi con manzana.", audio: "lola_kiwi.mp3" }
+];
+
+let idx = 0;
+let seleccionadas = [];
+let correctas = 0;
+
+const imagenEl = document.getElementById('imagenFrase');
+const palabrasDiv = document.getElementById('palabras');
+const fraseSelDiv = document.getElementById('fraseSeleccionada');
+const btnVerificar = document.getElementById('btnVerificar');
+const btnBorrar = document.getElementById('btnBorrar');
+const btnReproducir = document.getElementById('btnReproducir');
+const mensajeDiv = document.getElementById('mensaje');
+const audioError = document.getElementById('audioError');
+const audioCorrecto = document.getElementById('audioCorrecto');
+
+function playAudioCurrent(){
+  const a = new Audio("audios/" + datos[idx].audio);
+  a.play().catch(()=>{});
+}
+
+function montarPalabras(){
+  palabrasDiv.innerHTML = "";
+  seleccionadas = [];
+  fraseSelDiv.textContent = "Selecciona las palabras abajo...";
+  const words = datos[idx].frase.split(" ");
+  const shuffled = words.slice().sort(()=>Math.random()-0.5);
+  shuffled.forEach(w => {
+    const b = document.createElement('button');
+    b.className = 'btnPalabra';
+    b.type = 'button';
+    b.textContent = w;
+    b.onclick = () => {
+      if(b.classList.contains('selected')){
+        b.classList.remove('selected');
+        const i = seleccionadas.indexOf(w);
+        if(i>-1) seleccionadas.splice(i,1);
+      } else {
+        b.classList.add('selected');
+        seleccionadas.push(w);
+      }
+      fraseSelDiv.textContent = seleccionadas.length ? seleccionadas.join(" ") : "Selecciona las palabras abajo...";
+    };
+    palabrasDiv.appendChild(b);
+  });
+}
+
+btnBorrar.addEventListener('click', ()=>{
+  seleccionadas = [];
+  document.querySelectorAll('.btnPalabra.selected').forEach(el=>el.classList.remove('selected'));
+  fraseSelDiv.textContent = "Selecciona las palabras abajo...";
+});
+
+imagenEl.addEventListener('click', playAudioCurrent);
+btnReproducir.addEventListener('click', playAudioCurrent);
+
+function showMessage(text, good){
+  mensajeDiv.textContent = text;
+  mensajeDiv.style.background = good ? '#4caf50' : '#e53935';
+  mensajeDiv.style.visibility = 'visible';
+  mensajeDiv.style.opacity = '1';
+  setTimeout(()=>{ mensajeDiv.style.visibility='hidden'; mensajeDiv.style.opacity='0'; }, 1300);
+}
+
+btnVerificar.addEventListener('click', ()=>{
+  const texto = seleccionadas.join(" ").trim();
+  if(!texto) return;
+  const esCorrecta = (texto === datos[idx].frase);
+
+  if(esCorrecta){
+    audioCorrecto.currentTime = 0;
+    audioCorrecto.play();
+    document.body.classList.add('flash-good');
+    showMessage("¡Correcto!", true);
+    correctas++;
+    idx++;
+    if(idx < datos.length){
+      setTimeout(()=>{ document.body.classList.remove('flash-good'); montarFraseActual(); }, 900);
+    } else {
+      setTimeout(()=>{ document.body.classList.remove('flash-good'); mostrarPantallaFinal(); }, 900);
+    }
+  } else {
+    audioError.currentTime = 0;
+    audioError.play();
+    document.body.classList.add('flash-bad');
+    showMessage("No es la frase correcta. Intenta otra vez.", false);
+    setTimeout(()=>{ document.body.classList.remove('flash-bad'); btnBorrar.click(); }, 900);
+  }
+});
+
+function montarFraseActual(){
+  const d = datos[idx];
+  imagenEl.src = "imagenes/" + d.img;
+  montarPalabras();
+}
+
+function mostrarPantallaFinal(){
+  const main = document.querySelector('main');
+  main.innerHTML = `
+    <div id="pantallaFinal">
+      <h2 style="color:#4caf50;">🎉 ¡Muy bien! Completaste las frases</h2>
+      <p>Respuestas correctas: <strong>${correctas}/${datos.length}</strong></p>
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button id="continuar" class="btn" style="background:var(--accent); color:white;">Continuar</button>
+        <button id="jugarDeNuevo" class="btn" style="background:#ffd54f; color:#213448;">Jugar de nuevo</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('continuar').addEventListener('click', ()=>{
+    window.location.href = "silabear4.html";
+  });
+  document.getElementById('jugarDeNuevo').addEventListener('click', ()=>{
+    window.location.href = "game4.html";
+  });
+}
+
+montarFraseActual();
+</script>
+</body>
+</html>
